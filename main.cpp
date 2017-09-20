@@ -18,6 +18,8 @@ double dy = 0;
 int leftScore = 0;
 int rightScore = 0;
 //player scores
+int resetCounter = 0;
+//time counter for reset between a score and next serve
 
 double paddlePosLeft = 200;
 double paddlePosRight = 200;
@@ -25,6 +27,9 @@ double paddlePosRight = 200;
 
 bool play = true;
 //whether a game is currently in session
+bool moving = true;
+
+
 
    resetBall(){
            xpos = 300;
@@ -32,6 +37,10 @@ bool play = true;
            //resets the ball to the center of the field
            dy = 0;
            //sets the y derivative of the ball's position to zero
+           moving = false;
+           //ball freezes in center
+           resetCounter = 100;
+           //counter set to count down before ball starts moving
            }
 
     bool checkHit (double paddlePos, int side){
@@ -123,13 +132,38 @@ main()
        outtextxy(350, 50, numbufRight);
        //displays the score for the right (white) player
 
+       setcolor(RED);
+       outtextxy(295, 195, " ");
+
        setcolor(BLACK);
        circle(xpos,ypos,25);
        //clears out old image of ball
 
+       if(moving)
+       {
        xpos += dx;
        ypos += dy;
        //ball's position iterated one time step based on it's velocity
+       }else{
+           resetCounter -= 1;
+           if(resetCounter > 70){
+                setcolor(RED);
+                outtextxy(295, 195, "3");
+           //display a 3 for count down till next serve
+           }else if(resetCounter > 40){
+               setcolor(RED);
+               outtextxy(295, 195, "2");
+               //display a 2 for count down till next serve
+           }else if(resetCounter > 10){
+               setcolor(RED);
+               outtextxy(295, 195, "1");
+               //display a 1 for count down till next serve
+
+           }else if(resetCounter < 1){
+            moving = true;
+            //set the ball to continue moving
+           }
+       }
 
        hitLeft = checkHit(paddlePosLeft, 1);
        hitRight = checkHit(paddlePosRight, 2);
@@ -213,10 +247,10 @@ if (!(hitLeft || hitRight)){
 
     if (xpos > 477){
         //if the edge of the ball passes the right border
-        dx = 4;
-        //ball's x velocity is set to rightward as left player is now serving to right
         resetBall();
         //method that resets the ball to the center of the field
+        dx = 4;
+        //ball's x velocity is set to rightward as left player is now serving to right
         setcolor(BLUE);
         line(502,0,502,1000);
         //right border redrawn
@@ -226,10 +260,10 @@ if (!(hitLeft || hitRight)){
 
     if (xpos < 123){
         //if the edge of the ball passes the right border
-        dx = -4;
-        //ball's x velocity is set to leftward as right player is now serving to left
         resetBall();
         //method that resets the ball to the center of the field
+        dx = -4;
+        //ball's x velocity is set to leftward as right player is now serving to left
         setcolor(GREEN);
         line(98,0,98,1000);
         //right border redrawn
